@@ -29,7 +29,7 @@ Once created open your notebook and from the terminal run:
 
 ```
 cd SageMaker/
-git clone https://github.com/aws-samples/reinvent2019-aim362-sagemaker-debugger-model-monitor  
+git clone https://github.com/aws-samples/reinvent2019-aim362-sagemaker-debugger-model-monitor.git
 ```
 
 Exit the terminal and open your notebook.

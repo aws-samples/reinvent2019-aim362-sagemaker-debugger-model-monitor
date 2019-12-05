@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Amazon SageMaker is a fully managed service that removes the heavy lifting from each step of the machine learning workflow, and provides every developer and data scientist with the ability to build, train, and deploy machine learning (ML) models quickly. In this interactive workshop, we will work on the different aspects of the ML workflow to build, train, and deploy a model using all the capabilities of SageMaker including the ones that we announced at re:Invent this week. We will use the Amazon SageMaker to build and share notebooks, train and debug models with SageMaker Debugger, and deploy and monitor with SageMaker Model Monitor. Let’s build together!
+Amazon SageMaker is a fully managed service that removes the heavy lifting from each step of the machine learning workflow, and provides every developer and data scientist with the ability to build, train, and deploy machine learning (ML) models quickly. In this interactive workshop, we will work on the different aspects of the ML workflow to build, train, and deploy a model using all the capabilities of Amazon SageMaker including the ones that we announced at re:Invent 2019. We will use the Amazon SageMaker to build, train & debug models with Amazon SageMaker Debugger, and deploy & monitor with Amazon SageMaker Model Monitor. Let’s build together!
 
 
 ## Datasets
@@ -11,7 +11,7 @@ Amazon SageMaker is a fully managed service that removes the heavy lifting from 
 In this workshop, we will go through the steps of training, debugging, deploying and monitoring a **network traffic classification model**.
 
 For training our model we will be using datasets <a href="https://registry.opendata.aws/cse-cic-ids2018/">CSE-CIC-IDS2018</a> by CIC and ISCX which are used for security testing and malware prevention.
-These datasets include a huge amount of raw network traffic logs, plus pre-processed data where network connections have been reconstructed and  relevant features have been extracted using CICFlowMeter, a tool that outputs network connection features as CSV files. Each record is classified as benign traffic, or it can be malicious traffic, with a total number of 15 classes.
+These datasets include a huge amount of raw network traffic logs, plus pre-processed data where network connections have been reconstructed and relevant features have been extracted using CICFlowMeter, a tool that outputs network connection features as CSV files. Each record is classified as benign traffic, or it can be malicious traffic, with a total number of 15 classes.
 
 The goal is to demonstrate how to execute training of a network traffic classification model using the Amazon SageMaker framework container for XGBoost, training and debugging. Once trained how to then deploy and monitor the model performance.
 
@@ -25,7 +25,7 @@ Initially have an open AWS account, with privileges to create and run Amazon Sag
 In the console goto Amazon SageMaker and create a new notebook instance. 
 Give the created notebook a name, use the default settings and the instance size of ml.t2.medium. If you are using an Event Engine account, the execution role for the notebook will have been created during the account creation process. (The notebooks only access Amazon S3 and Amazon SageMaker services in this workshop)
 
-Once created open your notebook and from the terminal run:
+Once created open your notebook and from the Jupyter terminal on the notebook instance run:
 
 ```
 cd SageMaker/

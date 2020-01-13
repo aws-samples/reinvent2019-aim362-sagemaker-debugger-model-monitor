@@ -1,3 +1,5 @@
+import os, sys
+from urllib.parse import urlparse
 from sagemaker.processing import Processor, ProcessingInput, ProcessingOutput
 
 def get_model_monitor_container_uri(region):
@@ -27,8 +29,12 @@ def get_model_monitor_container_uri(region):
     container_uri = container_uri_format.format(regions_to_accounts[region], region)
     return container_uri
 
-def run_model_monitor_job_processor(region, instance_type, role, data_capture_path, preprocessor_path, postprocessor_path,
-                                   statistics_path, constraints_path, reports_path):
+def get_file_name(url):
+    a = urlparse(url)
+    return os.path.basename(a.path)
+
+def run_model_monitor_job_processor(region, instance_type, role, data_capture_path, statistics_path, constraints_path, reports_path,
+                                    instance_count=1, preprocessor_path=None, postprocessor_path=None, publish_cloudwatch_metrics='Disabled'):
     
     data_capture_sub_path = data_capture_path[data_capture_path.rfind('datacapture/') :]
     data_capture_sub_path = data_capture_sub_path[data_capture_sub_path.find('/') + 1 :]
@@ -52,37 +58,45 @@ def run_model_monitor_job_processor(region, instance_type, role, data_capture_pa
                                   s3_data_type='S3Prefix',
                                   s3_input_mode='File')
 
-    post_processor_script = ProcessingInput(input_name='post_processor_script',
-                                            source=postprocessor_path,
-                                            destination='/opt/ml/processing/code/postprocessing',
-                                            s3_data_type='S3Prefix',
-                                            s3_input_mode='File')
-
-    pre_processor_script = ProcessingInput(input_name='pre_processor_script',
-                                           source=preprocessor_path,
-                                           destination='/opt/ml/processing/code/preprocessing',
-                                           s3_data_type='S3Prefix',
-                                           s3_input_mode='File')
-
     outputs = ProcessingOutput(output_name='result',
                                source='/opt/ml/processing/output',
                                destination=processing_output_paths,
                                s3_upload_mode='Continuous')
 
+    env = {'baseline_constraints': '/opt/ml/processing/baseline/constraints/' + get_file_name(constraints_path),
+           'baseline_statistics': '/opt/ml/processing/baseline/stats/' + get_file_name(statistics_path),
+           'dataset_format': '{"sagemakerCaptureJson":{"captureIndexNames":["endpointInput","endpointOutput"]}}',
+           'dataset_source': '/opt/ml/processing/input/endpoint',
+           'output_path': '/opt/ml/processing/output',
+           'publish_cloudwatch_metrics': publish_cloudwatch_metrics }
+    
+    inputs=[input_1, baseline, constraints]
+    
+    if postprocessor_path:
+        env['post_analytics_processor_script'] = '/opt/ml/processing/code/postprocessing/' + get_file_name(postprocessor_path)
+        
+        post_processor_script = ProcessingInput(input_name='post_processor_script',
+                                                source=postprocessor_path,
+                                                destination='/opt/ml/processing/code/postprocessing',
+                                                s3_data_type='S3Prefix',
+                                                s3_input_mode='File')
+        inputs.append(post_processor_script)
+
+    if preprocessor_path:
+        env['record_preprocessor_script'] = '/opt/ml/processing/code/preprocessing/' + get_file_name(preprocessor_path)
+         
+        pre_processor_script = ProcessingInput(input_name='pre_processor_script',
+                                               source=preprocessor_path,
+                                               destination='/opt/ml/processing/code/preprocessing',
+                                               s3_data_type='S3Prefix',
+                                               s3_input_mode='File')
+        
+        inputs.append(pre_processor_script) 
+    
     processor = Processor(image_uri = get_model_monitor_container_uri(region),
-                          instance_count = 1,
+                          instance_count = instance_count,
                           instance_type = instance_type,
                           role=role,
-                          env = {
-                              'baseline_constraints': '/opt/ml/processing/baseline/constraints/constraints.json',
-                              'baseline_statistics': '/opt/ml/processing/baseline/stats/statistics.json',
-                              'dataset_format': '{"sagemakerCaptureJson":{"captureIndexNames":["endpointInput","endpointOutput"]}}',
-                              'dataset_source': '/opt/ml/processing/input/endpoint',
-                              'output_path': '/opt/ml/processing/output',
-                              'post_analytics_processor_script': '/opt/ml/processing/code/postprocessing/postprocessor.py',
-                              'publish_cloudwatch_metrics': 'Disabled',
-                              'record_preprocessor_script': '/opt/ml/processing/code/preprocessing/preprocessor.py'
-                          })
-    
-    return processor.run(inputs=[input_1, baseline, constraints, post_processor_script, pre_processor_script],
-             outputs=[outputs])
+                          env = env)
+
+    return processor.run(inputs=inputs, outputs=[outputs])

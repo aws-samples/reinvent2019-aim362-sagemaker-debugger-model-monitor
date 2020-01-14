@@ -20,19 +20,77 @@ The goal is to demonstrate how to execute training of a network traffic classifi
 
 Initially have an open AWS account, with privileges to create and run Amazon SageMaker notebooks and access to S3 buckets.
 
-### Setting Up The environment
+You can run this workshop in all commercial AWS regions where Amazon SageMaker is GA.
 
-In the console goto Amazon SageMaker and create a new notebook instance. 
-Give the created notebook a name, use the default settings and the instance size of ml.t2.medium. If you are using an Event Engine account, the execution role for the notebook will have been created during the account creation process. (The notebooks only access Amazon S3 and Amazon SageMaker services in this workshop)
+### Create a managed Jupyter Notebook instance
+First, let's create an Amazon SageMaker managed Jupyter notebook instance.
+An **Amazon SageMaker notebook instance** is a fully managed ML compute instance running the <a href="http://jupyter.org/">**Jupyter Notebook**</a> application. Amazon SageMaker manages creating the instance and related resources. 
 
-Once created open your notebook and from the Jupyter terminal on the notebook instance run:
+1. In the AWS Management Console, click on Services, type “SageMaker” and press enter.
+	
+	<img src="images/search_sagemaker.png" alt="Search SageMaker" width="700px" />
+2. You’ll be placed in the Amazon SageMaker dashboard. Click on **Notebook instances** either in the landing page or in the left menu.
+	
+	<img src="images/sagemaker_dashboard.png" alt="SageMaker dashboard" width="700px" />
+	
+3. Once in the Notebook instances screen, click on the top-righ button **Create notebook instance**.
 
-```
-cd SageMaker/
-git clone https://github.com/aws-samples/reinvent2019-aim362-sagemaker-debugger-model-monitor.git
-```
+	<img src="images/notebook_instances_screen.png" alt="Notebook Instances screen" width="700px" />
+ 
+4. In the **Create notebook instance** screen
 
-Exit the terminal and open your notebook.
+	<img src="images/create_notebook_instance_screen.png" alt="Create Notebook Instance screen" width="700px" />
+
+	1. Give the Notebook Instance a name like _aim362-workshop_ or what you prefer
+
+	2. Choose **ml.t2.medium** as **Notebook instance type**
+	3. In the **IAM role** dropdown list you need to select an AWS IAM Role that is configured with security policies allowing access to Amazon SageMaker (full access) and Amazon S3 (default SageMaker buckets). If you don't have any role with those privileges, choose **Create New Role** and configure the role as follows:
+	
+		<img src="images/create_notebook_instance_role.png" alt="Create Notebook Instance Role" width="600px" />
+
+	4. Keep **No VPC** selected in the **VPC** dropdown list
+	5. Keep **No configuration** selected in the **Lifecycle configuration** dropdown list
+	6. Keep **No Custom Encryption** selected in the **Encryption key** dropdown list
+	7. Finally, click on **Create notebook instance**
+
+4. You will be redirected to the **Notebook instances** screen and you will see a new notebook instance in _Pending_ state.
+
+	<img src="images/notebook_instance_pending.png" alt="Notebook instance pending" width="700px" />
+	
+	Wait until the notebook instance is status is _In Service_ and then click on the **Open Jupyter Lab** button to be redirected to Jupyter Lab.
+
+	<img src="images/notebook_instance_in_service.png" alt="Notebook instance in service" width="700px" />
+	
+	The Jupyter Lab interface will load, as shown below.
+	
+	<img src="images/jupyter_lab_screen.png" alt="Jupyter Lab screen" width="700px" />
+
+### Download workshop code to the notebook instance
+
+All the code of this workshop is implemented and available for download from this GitHub repository.
+
+As a consequence, in this section we will clone the GitHub repository into the Amazon SageMaker notebook instance and access the Jupyter Notebooks to run the workshop.
+
+1. From the file menu, click on **New > Terminal**
+	
+	<img src="images/jupyter_new_terminal.png" alt="Jupyter New Terminal tab" width="500px" />
+
+	This will open a terminal tab in the Jupyter Lab interface
+	
+	<img src="images/jupyter_terminal_tab.png" alt="Jupyter Terminal Tab" width="700px" />
+
+2. Execute the following commands in the terminal
+
+	```
+	cd SageMaker/
+	git clone https://github.com/aws-samples/reinvent2019-aim362-sagemaker-debugger-model-monitor.git
+	```
+
+3. When the clone operation completes, the folder **reinvent2019-aim362-sagemaker-debugger-model-monitor** will appear automatically in the file browser on the left (if not, you can hit the **Refresh** button)
+
+	<img src="images/jupyter_clone.png" alt="Jupyter Cloned Workshop Screen" width="700px" />
+	
+4. Browse to the folder **01\_train\_and\_debug** and open the file **train\_and\_debug.ipynb** to get started.
 
 ## Modules
 
